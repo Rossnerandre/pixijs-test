@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="gameDiv"></div>
+
+    <script>
+        // Create the application helper and add its render target to the page
+        let app = new PIXI.Application({ width: 1200, height: 800 });
+        document.querySelector('#gameDiv').appendChild(app.view);
+
+        let bullets = [];
+        let bulletsSpeed = 10;
+
+        // Create the sprite and add it to the stage
+        let player = PIXI.Sprite.from('pngwing.com.png');
+
+        app.stage.interactive = true;
+        // app.stage.on('pointerdown', fireBullet)
+        document.querySelector('#gameDiv').addEventListener('pointerdown', fireBullet)
+
+        app.stage.addChild(player);
+
+        app.ticker.add(gameLoop);
+
+        player.width = 50
+        player.height = 60
+        player.x = app.view.width / 2
+        player.y = app.view.height / 2
+
+        window.addEventListener('keydown', (e) => {
+
+            if (e.key === "ArrowUp")
+                player.y -= 5
+
+            if (e.key === "ArrowDown")
+                player.y += 5
+
+            if (e.key === 'ArrowLeft')
+                player.x -= 5
+
+            if (e.key === 'ArrowRight')
+                player.x += 5
+
+            if (e.key === ' ')
+                fireBullet()
+        });
+
+        function fireBullet() {
+            console.log('é tiro')
+
+            let bullet = createBullet();
+            bullets.push(bullet);
+            console.log(bullets)
+        }
+
+        function createBullet() {
+            let bullet = new PIXI.Sprite.from('ehTiro.png');
+            bullet.x = player.x + 21;
+            bullet.y = player.y;
+            bullet.speed = bulletsSpeed;
+            app.stage.addChild(bullet);
+
+            return bullet;
+        }
+
+        function updateBullets(delta) {
+            for (let i = 0; i < bullets.length; i++) {
+                bullets[i].position.y -= bullets[i].speed
+
+                if (bullets[i].position.y < 0) {
+                    bullets[i].dead = true;
+                }
+            }
+
+            for (let i = 0; i < bullets.length; i++) {
+                if (bullets[i].dead) {
+                    app.stage.removeChild(bullets[i]);
+                    bullets.splice(i, 1);
+                }
+            }
+        }
+
+        function gameLoop(delta) {
+            updateBullets(delta)
+        }
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
